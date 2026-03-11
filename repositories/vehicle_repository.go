@@ -9,6 +9,7 @@ type VehicleRepository struct {
 	DB *sql.DB
 }
 
+// GET ALL VEHICLES
 func (r *VehicleRepository) GetAll() ([]models.Vehicle, error) {
 
 	rows, err := r.DB.Query("SELECT id, brand, model, year FROM vehicles")
@@ -36,3 +37,13 @@ func (r *VehicleRepository) GetAll() ([]models.Vehicle, error) {
 
 	return vehicles, nil
 }
+
+// CREATE A VEHICLE
+func (r *VehicleRepository) Create(vehicle models.Vehicle) (int64, error) {
+	result, err := r.DB.Exec("INSERT INTO vehicles (brand, model, year) VALUES (?, ?, ?)", vehicle.Brand, vehicle.Model, vehicle.Year)//values with ? to prevent sql injection
+	if err != nil {
+		return 0, err
+	}
+	return result.LastInsertId()
+}
+
