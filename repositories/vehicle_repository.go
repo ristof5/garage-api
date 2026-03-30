@@ -47,3 +47,40 @@ func (r *VehicleRepository) Create(vehicle models.Vehicle) (int64, error) {
 	return result.LastInsertId()
 }
 
+// UPDATE A VEHICLE
+func (r *VehicleRepository) UpdateVehicle(id string, vehicle models.Vehicle) error {
+
+	query := `
+	UPDATE vehicles 
+	SET brand = ?, model = ?, year = ?
+	WHERE id = ?
+	`
+
+	_, err := r.DB.Exec(query, vehicle.Brand, vehicle.Model, vehicle.Year, id)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// DELETE A  VEHICLE
+func (r *VehicleRepository) DeleteVehicle(id string) error {
+
+	query := "DELETE FROM vehicles WHERE id = ?"
+
+	result, err := r.DB.Exec(query, id)
+
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, _ := result.RowsAffected()
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("vehicle not found")
+	}
+
+	return nil
+}
