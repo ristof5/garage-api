@@ -30,9 +30,13 @@ func main() {
 	service := services.VehicleService{Repo: &repo}
 	controller := controllers.VehicleController{Service: &service}
 
+	serviceRepo := repositories.ServiceRepository{DB: db}
+	serviceService := services.ServiceService{Repo: &serviceRepo}
+	serviceController := controllers.ServiceController{Service: &serviceService}
+
 	r := gin.Default()
 
-	routes.SetupRoutes(r, &controller)
+	routes.SetupRoutes(r, &controller, &serviceController)
 
 	r.Run(":8080")
 }

@@ -1,12 +1,12 @@
 package routes
 
 import (
-	"github.com/gin-gonic/gin"
 	"garage-api/controllers"
+	"github.com/gin-gonic/gin"
 )
 
-func SetupRoutes(r *gin.Engine, vc *controllers.VehicleController) {
-
+func SetupRoutes(r *gin.Engine, vc *controllers.VehicleController, sc *controllers.ServiceController) {
+	// vehicle
 	r.GET("/vehicles", vc.GetVehicles)
 
 	r.GET("/vehicles/:id", vc.GetVehicleById)
@@ -16,5 +16,12 @@ func SetupRoutes(r *gin.Engine, vc *controllers.VehicleController) {
 	r.PUT("/vehicles/:id", vc.UpdateVehicle)
 
 	r.DELETE("/vehicles/:id", vc.DeleteVehicle)
+
+	// services
+	r.POST("/services", sc.CreateService)
+	r.GET("/services", sc.GetServices)
+
+	// relation
+	r.GET("/vehicles/:id/services", sc.GetServicesByVehicle)
 
 }
