@@ -39,6 +39,24 @@ func (r *VehicleRepository) GetAll() ([]models.Vehicle, error) {
 	return vehicles, nil
 }
 
+// get vehicle by id
+func (r *VehicleRepository) GetVehicleById(id int) (models.Vehicle, error) {
+	var vehicle models.Vehicle
+
+	query := "SELECT id, brand, model, year FROM vehicles WHERE id = ?"
+
+	row := r.DB.QueryRow(query, id)
+
+	err := row.Scan(&vehicle.ID, &vehicle.Brand, &vehicle.Model, &vehicle.Year)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return vehicle, fmt.Errorf("vehicle not found")
+		}
+		return vehicle, err
+	}
+	return vehicle, nil
+}
+
 // CREATE A VEHICLE
 func (r *VehicleRepository) Create(vehicle models.Vehicle) (int64, error) {
 	result, err := r.DB.Exec("INSERT INTO vehicles (brand, model, year) VALUES (?, ?, ?)", vehicle.Brand, vehicle.Model, vehicle.Year)//values with ? to prevent sql injection

@@ -2,21 +2,22 @@ package controllers
 
 import (
 	"net/http"
+	"strconv"
 
 	"garage-api/helpers"
 	"garage-api/models"
-	"garage-api/repositories"
+	"garage-api/services"
 
 	"github.com/gin-gonic/gin"
 )
 
 type VehicleController struct {
-	Repo *repositories.VehicleRepository
+	Service *services.VehicleService
 }
 // get method, GET ALL VEHICLES
 func (vc *VehicleController) GetVehicles(c *gin.Context) {
 
-	vehicles, err := vc.Repo.GetAll()
+	vehicles, err := vc.Service.GetAllVehicles()
 
 	if err != nil {
 
@@ -27,6 +28,22 @@ func (vc *VehicleController) GetVehicles(c *gin.Context) {
 	helpers.SuccessResponse(c, "Vehicles fetched successfully", vehicles)
 }
 
+//get method, get by id vehicle
+func (vc *VehicleController) GetVehicleById(c *gin.Context) {
+	idParam := c.Param("id")
+
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		helpers.ErrorResponse(c, http.StatusBadRequest, "Invalid ID" , err.Error())
+		return
+	}
+	vehicle, err := vc.Service.GetVehicleById(id)
+	if err != nil {
+		helpers.ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch vehicle", err.Error())
+		return
+	}
+	helpers.SuccessResponse(c, "Vehicle fetched successfully", vehicle)
+}
 // post method, CREATE A VEHICLE
 func (vc *VehicleController) CreateVehicle(c *gin.Context) {
 
@@ -35,18 +52,18 @@ func (vc *VehicleController) CreateVehicle(c *gin.Context) {
 	err := c.ShouldBindJSON(&vehicle)
 
 	if err != nil {
-		helpers.ErrorResponse(c, http.StatusBadRequest, "Invalid request", err.Error())
+		helpers.ErrorResponse(c, 400, "Invalid request", err.Error())
 		return
 	}
 
-	_, err = vc.Repo.Create(vehicle)
+	err = vc.Service.CreateVehicle(vehicle)
 
 	if err != nil {
-		helpers.ErrorResponse(c, http.StatusInternalServerError, "Failed to create vehicle", err.Error())
+		helpers.ErrorResponse(c, 500, "Failed to create vehicle", err.Error())
 		return
 	}
 
-	helpers.SuccessResponse(c, "Vehicle created successfully", vehicle)
+	helpers.SuccessResponse(c, "Vehicle created", vehicle)
 }
 
 // put method, UPDATE A VEHICLE
@@ -59,27 +76,25 @@ func (vc *VehicleController) UpdateVehicle(c *gin.Context) {
 	err := c.ShouldBindJSON(&vehicle)
 
 	if err != nil {
-
-		helpers.ErrorResponse(c, http.StatusBadRequest, "Invalid request", err.Error())
+		helpers.ErrorResponse(c, 400, "Invalid request", err.Error())
 		return
 	}
 
-	err = vc.Repo.UpdateVehicle(id, vehicle)
+	err = vc.Service.UpdateVehicle(id, vehicle)
 
 	if err != nil {
-
-		helpers.ErrorResponse(c, http.StatusBadRequest, "Failed to update Vehicle", err.Error())
+		helpers.ErrorResponse(c, 500, "Failed to update", err.Error())
 		return
 	}
 
-	helpers.SuccessResponse(c, "Vehicle updated successfully", vehicle)
+	helpers.SuccessResponse(c, "Vehicle updated", nil)
 }
 
 // delete method, DELETE A VEHICLE
 func (vc *VehicleController) DeleteVehicle(c *gin.Context) {
 	id := c.Param("id")
 
-	err := vc.Repo.DeleteVehicle(id)
+	err := vc.Service.DeleteVehicle(id)
 
 	if err != nil {
 		helpers.ErrorResponse(c, http.StatusInternalServerError, "Failed to delete vehicle", err.Error())

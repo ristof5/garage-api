@@ -9,6 +9,8 @@ func SetupRoutes(r *gin.Engine, vc *controllers.VehicleController) {
 
 	r.GET("/vehicles", vc.GetVehicles)
 
+	r.GET("/vehicles/:id", vc.GetVehicleById)
+
 	r.POST("/vehicles", vc.CreateVehicle)
 
 	r.PUT("/vehicles/:id", vc.UpdateVehicle)

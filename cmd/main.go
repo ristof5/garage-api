@@ -5,6 +5,7 @@ import (
 	"garage-api/controllers"
 	"garage-api/repositories"
 	"garage-api/routes"
+	"garage-api/services"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -26,7 +27,8 @@ func main() {
 	}
 
 	repo := repositories.VehicleRepository{DB: db}
-	controller := controllers.VehicleController{Repo: &repo}
+	service := services.VehicleService{Repo: &repo}
+	controller := controllers.VehicleController{Service: &service}
 
 	r := gin.Default()
 
