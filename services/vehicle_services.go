@@ -44,3 +44,7 @@ import (
 	func (s *VehicleService) DeleteVehicle(id string) error{
 		return s.Repo.DeleteVehicle(id)
 	}
+
+	func (s *VehicleService) GetVehicleWithServices(id int) (models.VehicleDetail, error) {
+	return s.Repo.GetVehicleWithServices(id)
+}

@@ -103,3 +103,56 @@ func (r *VehicleRepository) DeleteVehicle(id string) error {
 
 	return nil
 }
+
+// GET VEHICLE DETAIL BY SERVICES
+func (r *VehicleRepository) GetVehicleWithServices(id int) (models.VehicleDetail, error) {
+
+	query := `
+	SELECT 
+		v.id, v.brand, v.model, v.year,
+		s.id, s.description, s.cost, s.service_date
+	FROM vehicles v
+	LEFT JOIN services s ON v.id = s.vehicle_id
+	WHERE v.id = ?
+	`
+
+	rows, err := r.DB.Query(query, id)
+
+	if err != nil {
+		return models.VehicleDetail{}, err
+	}
+
+	defer rows.Close()
+
+	var vehicle models.VehicleDetail
+	var services []models.Service
+
+	for rows.Next() {
+
+		var s models.Service
+
+		err := rows.Scan(
+			&vehicle.ID,
+			&vehicle.Brand,
+			&vehicle.Model,
+			&vehicle.Year,
+			&s.ID,
+			&s.Description,
+			&s.Cost,
+			&s.ServiceDate,
+		)
+
+		if err != nil {
+			return vehicle, err
+		}
+
+		// kalau service ada (tidak null)
+		if s.ID != 0 {
+			services = append(services, s)
+		}
+	}
+
+	vehicle.Services = services
+
+	return vehicle, nil
+}

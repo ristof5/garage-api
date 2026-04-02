@@ -103,3 +103,25 @@ func (vc *VehicleController) DeleteVehicle(c *gin.Context) {
 	helpers.SuccessResponse(c, "Vehicle deleted successfully", nil)
 
 }
+
+// get method, get vehicle detail by services
+func (vc *VehicleController) GetVehicleDetail(c *gin.Context) {
+
+	idParam := c.Param("id")
+
+	id, err := strconv.Atoi(idParam)
+
+	if err != nil {
+		helpers.ErrorResponse(c, 400, "Invalid ID", err.Error())
+		return
+	}
+
+	vehicle, err := vc.Service.GetVehicleWithServices(id)
+
+	if err != nil {
+		helpers.ErrorResponse(c, 500, "Failed to fetch vehicle detail", err.Error())
+		return
+	}
+
+	helpers.SuccessResponse(c, "Success get vehicle detail", vehicle)
+}

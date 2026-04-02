@@ -79,7 +79,7 @@ func (r *ServiceRepository) GetByVehicleID(vehicleID int) ([]models.Service, err
 		)
 
 		if err != nil {
-			return nil, err
+			return nil, err 
 		}
 
 		services = append(services, s)

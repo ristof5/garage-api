@@ -17,6 +17,8 @@ func SetupRoutes(r *gin.Engine, vc *controllers.VehicleController, sc *controlle
 
 	r.DELETE("/vehicles/:id", vc.DeleteVehicle)
 
+	r.GET("/vehicles/:id/detail", vc.GetVehicleDetail)
+
 	// services
 	r.POST("/services", sc.CreateService)
 	r.GET("/services", sc.GetServices)
