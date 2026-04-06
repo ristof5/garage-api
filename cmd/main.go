@@ -5,6 +5,7 @@ import (
 	"garage-api/controllers"
 	"garage-api/repositories"
 	"garage-api/routes"
+	// "garage-api/seeds"
 	"garage-api/services"
 
 	"github.com/gin-gonic/gin"
@@ -34,9 +35,17 @@ func main() {
 	serviceService := services.ServiceService{Repo: &serviceRepo}
 	serviceController := controllers.ServiceController{Service: &serviceService}
 
+	// user repo
+	userRepo := repositories.UserRepository{DB: db}
+	// auth service
+	authService := services.AuthService{Repo: &userRepo}
+	// auth controller
+	authController := controllers.AuthController{Service: &authService}
+	// seeds.SeedUser(db)
+
 	r := gin.Default()
 
-	routes.SetupRoutes(r, &controller, &serviceController)
+	routes.SetupRoutes(r, &controller, &serviceController, &authController)
 
 	r.Run(":8080")
 }

@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRoutes(r *gin.Engine, vc *controllers.VehicleController, sc *controllers.ServiceController) {
+func SetupRoutes(r *gin.Engine, vc *controllers.VehicleController, sc *controllers.ServiceController, ac *controllers.AuthController) {
 	// vehicle
 	r.GET("/vehicles", vc.GetVehicles)
 
@@ -25,5 +25,8 @@ func SetupRoutes(r *gin.Engine, vc *controllers.VehicleController, sc *controlle
 
 	// relation
 	r.GET("/vehicles/:id/services", sc.GetServicesByVehicle)
+
+	// auth
+	r.POST("/auth/login", ac.Login)
 
 }
