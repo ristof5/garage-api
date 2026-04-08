@@ -2,8 +2,8 @@ package routes
 
 import (
 	"garage-api/controllers"
-	"github.com/gin-gonic/gin"
 	"garage-api/middlewares"
+	"github.com/gin-gonic/gin"
 )
 
 func SetupRoutes(r *gin.Engine, vc *controllers.VehicleController, sc *controllers.ServiceController, ac *controllers.AuthController) {
@@ -15,14 +15,19 @@ func SetupRoutes(r *gin.Engine, vc *controllers.VehicleController, sc *controlle
 	auth := r.Group("/")
 	auth.Use(middlewares.AuthMiddleware())
 
-	// vehicles
+	// vehicles & services user
 	auth.GET("/vehicles", vc.GetVehicles)
-	auth.POST("/vehicles", vc.CreateVehicle)
-	auth.PUT("/vehicles/:id", vc.UpdateVehicle)
-	auth.DELETE("/vehicles/:id", vc.DeleteVehicle)
-
-	// services
-	auth.POST("/services", sc.CreateService)
 	auth.GET("/services", sc.GetServices)
 	auth.GET("/vehicles/:id/services", sc.GetServicesByVehicle)
+
+	// admin role
+	admin := auth.Group("/")
+	admin.Use(middlewares.RoleMiddleware("admin"))
+
+	admin.POST("/vehicles", vc.CreateVehicle)
+	admin.PUT("/vehicles/:id", vc.UpdateVehicle)
+	admin.DELETE("/vehicles/:id", vc.DeleteVehicle)
+
+	admin.POST("/services", sc.CreateService)
+
 }

@@ -22,7 +22,7 @@ func (s *AuthService) Login(username, password string) (string, error) {
 		return "", errors.New("invalid password")
 	}
 
-	token, err := helpers.GenerateToken(user.ID)
+	token, err := helpers.GenerateToken(user.ID, user.Role)
 
 	if err != nil {
 		return "", err
