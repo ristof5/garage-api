@@ -15,7 +15,6 @@ func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 		authHeader := c.GetHeader("Authorization")
-		
 
 		if authHeader == "" {
 			helpers.ErrorResponse(c, http.StatusUnauthorized, "Authorization header required", nil)
@@ -41,12 +40,18 @@ func AuthMiddleware() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+		// SESUDAH (fix)
 		claims, ok := token.Claims.(jwt.MapClaims)
 		if !ok {
-			c.Set("user_id", claims["user_id"])
-			c.Set("role", claims["role"])
+			helpers.ErrorResponse(c, http.StatusUnauthorized, "Invalid token claims", nil)
+			c.Abort()
+			return
 		}
 
+		c.Set("user_id", claims["user_id"])
+		c.Set("role", claims["role"])
+
 		c.Next()
+
 	}
 }

@@ -8,7 +8,7 @@ import (
 
 func SeedUser(db *sql.DB) {
 
-	username := "admin"
+	username := "user1"
 	password := "123456"
 
 	hashedPassword, err := helpers.HashPassword(password)

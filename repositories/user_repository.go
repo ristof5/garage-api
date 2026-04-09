@@ -1,7 +1,9 @@
+// SESUDAH (fix)
 package repositories
 
 import (
 	"database/sql"
+	"errors"
 	"garage-api/models"
 )
 
@@ -22,7 +24,10 @@ func (r *UserRepository) GetByUsername(username string) (models.User, error) {
 	)
 
 	if err != nil {
-		return user, nil
+		if err == sql.ErrNoRows {
+			return user, errors.New("user not found")
+		}
+		return user, err
 	}
 
 	return user, nil
